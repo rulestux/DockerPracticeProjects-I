@@ -32,12 +32,13 @@ services:
 
   # contêiner da aplicação web:
   wordpress:
-    # lista de contêineres a serem conectados:
+    # lista de contêineres que devem ser iniciados antes do atual; neste caso,
+    # contêiner com bancos de dados a serem conectados:
     depends_on:
       - db
     image: wordpress:latest
-    volumes:
     # volumes bind mounts:
+    volumes:
       - ./config/php.conf.uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       - ./wp-app:/var/www/html
     restart: always
