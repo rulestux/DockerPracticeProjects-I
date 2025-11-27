@@ -1,0 +1,60 @@
+# requisito: declarar a versão do docker-compose:
+version: 2.2
+
+# requisito: sessão de serviços para aplicação, i. e., contêineres:
+services:
+  # contêiner de base de dados MySQL:
+  db:
+    # equivalente a 'FROM mysql:5.7':
+    image: mysql:5.7
+    # equivalente a 'CMD'
+    command: mysqld --default_authentication_plugin=mysql_native_password
+    # definindo volumes em forma de lista *.yaml:
+    volumes:
+      - db_data: /var/lib/mysql
+    # para atualizar automaticamente alterações do presente arquivo no projeto:
+    restart: always
+    # variáveis de ambiente:
+    environment:
+      TZ: America/Fortaleza
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: fel
+      MYSQL_PASSWORD: 123456
+    # definindo porta padrão do MySQL:
+    ports:
+      - 3308:3306
+    # definindo rede bridge conectada ao contêiner da aplicação:
+    networks:
+      - wordpress-network
+
+  # contêiner da aplicação web:
+  wordpress:
+    # lista de contêineres a serem conectados:
+    depends_on:
+      - db
+    image: wordpress:latest
+      # volumes bind mounts:
+    volumes:
+      - ./config/php.conf.uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./wp-app:/var/www/html
+    # definindo portas, na mesma sintaxe do dockerfile:
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      TZ: America/Fortaleza
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: fel
+      WORDPRESS_DB_PASSWORD: 123456
+      WORDPRESS_DB_NAME: wordpress
+    ports:
+      - 8080:80
+    networks:
+      - wordpress-network
+
+# criando a rede bridge a ser usada:
+networks:
+  wordpress-network:
+    driver: bridge
+
