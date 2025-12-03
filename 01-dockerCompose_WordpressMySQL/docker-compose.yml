@@ -23,7 +23,7 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: fel
       MYSQL_PASSWORD: 123456
-    # definindo porta padrão do MySQL:
+    # definindo porta padrão do MySQL, na mesma sintaxe do dockerfile:
     ports:
       - 3306:3306
     # definindo rede bridge conectada ao contêiner da aplicação:
