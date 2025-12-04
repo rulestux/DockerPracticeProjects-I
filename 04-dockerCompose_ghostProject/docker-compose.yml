@@ -1,0 +1,57 @@
+version: '3.9'
+
+# example para Ghost extraído de https://hub.docker.com/_/ghost
+
+services:
+
+  ghost:
+    image: ghost:5-alpine
+    #restart: always # configuração original retirada;
+    ports:
+      - 8080:2368
+    environment:
+      # see https://ghost.org/docs/config/#configuration-options
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: example
+      database__connection__database: ghost
+      # this url value is just an example, and is likely wrong for your environment!
+      #url: http://localhost:8080
+      # contrary to the default mentioned in the linked documentation, this image defaults to NODE_ENV=production (so development mode needs to be explicitly specified if desired)
+      #NODE_ENV: development
+    volumes:
+      - ghost:/var/lib/ghost/content
+    # inclusão das duas redes, para a requisição chegar pela pública e a
+    # consulta ao DB se realizar pela privada:
+    networks:
+      - public
+      - private
+    # precisa carregar com o 'db':
+    depends_on:
+      - db
+    # metodologia de deploy para definição de número de RÉPLICAS:
+    deploy:
+      replicas: 1
+
+  db:
+    image: mysql:8.0
+    #restart: always # configuração original retirada;
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - db:/var/lib/mysql
+    # banco de dados apenas na rede privada:
+    networks:
+      - private
+    deploy:
+      replicas: 1
+
+volumes:
+  ghost:
+  db:
+
+# declaração das redes:
+networks:
+  public:
+  private:

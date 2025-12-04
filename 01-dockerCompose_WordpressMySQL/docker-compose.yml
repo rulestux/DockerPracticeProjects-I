@@ -1,5 +1,5 @@
 # requisito: declarar a versão do docker-compose:
-version: 2.2
+version: 5.0.0
 
 # requisito: sessão de serviços para aplicação, i. e., contêineres;
 # note-se que não é uma lista, mas um MAPA, com conteúdo sem uso de '-':
